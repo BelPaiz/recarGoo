@@ -17,14 +17,17 @@
     </ion-toolbar>
   </ion-header>
   <div class="container">
-    <div class="input-group-append">
-      <span >
-          <img class="logo" src="../../assets/candado abierto.png"  alt="">
-      </span>
-  </div>
-    <div class="texto">
-      <h1>FELICIDADES INGRESASTE CORRECTAMENTE</h1>
+    <h3>Créditos</h3>
+    <p class="creditos flex centered">{{ this.servicioCreditos.consultarCreditos() }}</p>
+
+    <div class="error-container flex centered">
+      <p *ngIf="cargaExitosa" [class.show]="cargaExitosa" class="success-msg">La carga se realizó correctamente.</p>
+      <p *ngIf="cargaFallida" [class.show]="cargaFallida" class="error-msg">No se pudo realizar la carga.</p>
     </div>
+
+    <ion-button class="scan-btn" (click)="scan()">Escanear</ion-button>
+    <ion-button (click)="this.servicioCreditos.deleteCreditos()">Limpiar créditos</ion-button>
+    
   </div>
  
   

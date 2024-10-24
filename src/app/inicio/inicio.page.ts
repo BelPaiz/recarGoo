@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthenService } from '../services/authen.service';
+import { CreditsService } from '../services/credits.service';
+import { QrScannerService } from '../services/qr-scanner.service';
 
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonIcon, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class InicioPage implements OnInit {
+  cargaExitosa: boolean = false;
+  cargaFallida: boolean = false;
+
 
   ocultar:boolean = false;
   mostrar:boolean = false;
@@ -21,6 +26,8 @@ export class InicioPage implements OnInit {
   dropdownOpen:boolean = false;
 
   constructor(private router: Router,
+    public qrScanner: QrScannerService,
+    public servicioCreditos: CreditsService,
     private auth:AuthenService) { }
 
   ngOnInit() {
@@ -55,5 +62,23 @@ export class InicioPage implements OnInit {
   }
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  scan(){
+    this.qrScanner.scanQRcode()
+    .then((code) => {
+      this.servicioCreditos.cargarCredito(code)
+      .then(
+        (res) => {
+          // FLAGS PARA MENSAJES
+          this.cargaExitosa = res;
+          this.cargaFallida = !res;
+          setTimeout(() => {
+            // FLAGS PARA MENSAJES
+            this.cargaExitosa = false;
+            this.cargaFallida = false;
+          }, 4000);
+      });
+    });
   }
 }

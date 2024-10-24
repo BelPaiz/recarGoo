@@ -7,14 +7,17 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthenService {
+  currentUser: string | null = null;
 
   private authState = new BehaviorSubject<string | null>(null);
   constructor(public auth: Auth) {
     onAuthStateChanged(this.auth, (user) => {
       if (user?.email) {
         this.authState.next(user.email);
+        this.currentUser = user.email;
       } else {
         this.authState.next(null);
+        this.currentUser = null;
       }
     });
   }
@@ -33,5 +36,13 @@ export class AuthenService {
 
   DatosAutenticacion(){
   return this.authState.asObservable();
+  }
+
+  getCurrentUser(): string {
+    return this.currentUser ? this.currentUser : '';
+  }
+
+  isAdmin(): boolean {
+    return this.currentUser == 'admin@admin.com';
   }
 }
